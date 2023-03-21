@@ -1,0 +1,24 @@
+version: '3'
+
+name: leos
+
+services:
+
+  leos:
+    container_name: leos
+    hostname: leos
+    build: ./dockerfiles/leos
+    ports:
+      - 9095:9095
+      - 9090:9090
+      - 8080:8080
+      - 9096:9096
+    command: >
+      bash -c
+      "
+      (cd /leos/tools/user-repo/web && mvn spring-boot:run -Dspring-boot.run.profiles=h2) &
+      (cd /leos/tools/cmis/chemistry-opencmis-server-inmemory && mvn jetty:run-war) &
+      (cd /leos/modules/web && mvn jetty:run-war) &
+      (cd /leos/tools/akn4euutil/web && mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config)
+      "
+
